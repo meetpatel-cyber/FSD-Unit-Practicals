@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.IO Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 650px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .chat-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px #00000018;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            flex: 1;
+            min-width: 0;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 5px;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        #messages {
+            padding-left: 20px;
+        }
+
+        #messages li {
+            margin: 12px 0;
+            overflow-wrap: anywhere;
+        }
+
+        #status {
+            color: #555;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Real-Time Chat Application</h1>
+
+    <div class="chat-box">
+        <p id="status">Connecting...</p>
+
+        <ul id="messages"></ul>
+
+        <form id="chatForm" class="input-row">
+            <input
+                type="text"
+                id="message"
+                placeholder="Enter your message"
+                autocomplete="off"
+                required
+            >
+
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        const socket = io();
+
+        const form = document.getElementById("chatForm");
+        const input = document.getElementById("message");
+        const messages = document.getElementById("messages");
+        const status = document.getElementById("status");
+
+        socket.on("connect", () => {
+            status.textContent = "Connected to chat";
+        });
+
+        socket.on("disconnect", () => {
+            status.textContent = "Disconnected. Reconnecting...";
+        });
+
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+
+            const message = input.value.trim();
+
+            if (message !== "") {
+                socket.emit("chatMessage", message);
+                input.value = "";
+                input.focus();
+            }
+        });
+
+        socket.on("chatMessage", (message) => {
+            const li = document.createElement("li");
+            li.textContent = message;
+            messages.appendChild(li);
+        });
+    </script>
+</body>
+</html>
