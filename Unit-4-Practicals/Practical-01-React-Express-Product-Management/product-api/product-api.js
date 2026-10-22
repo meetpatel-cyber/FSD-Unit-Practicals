@@ -78,31 +78,37 @@ app.get("/products/:id", (req, res) => {
 });
 
 app.post("/products", (req, res) => {
-    const newProduct = req.body;
-
+    const newProduct = {
+        ...req.body,
+        id: products.length > 0
+            ? Math.max(...products.map(p => Number(p.id) || 0)) + 1
+            : 101
+    };
     products.push(newProduct);
-
     res.status(201).json({
         message: "Product added successfully",
         product: newProduct
     });
 });
 
+
 app.put("/products/:id", (req, res) => {
     const productId = req.params.id;
-
     const index = products.findIndex(
         p => p.id == productId
     );
-
     if (index !== -1) {
-        products[index] = req.body;
-
+        products[index] = {
+            ...products[index],
+            ...req.body,
+            id: products[index].id
+        };
         res.status(200).json({
             message: "Product updated successfully",
             product: products[index]
         });
-    } else {
+    } 
+    else {
         res.status(404).json({
             message: "Product not found"
         });
