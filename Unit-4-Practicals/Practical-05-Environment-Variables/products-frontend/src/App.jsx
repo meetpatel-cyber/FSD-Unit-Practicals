@@ -16,7 +16,7 @@ function App() {
   const fetchProducts = async () => {
     try {
       const response = await fetch(
-        "${import.meta.env.VITE_API_URL}/products"
+        `${import.meta.env.VITE_API_URL}/products`
       );
 
       const data = await response.json();
@@ -62,7 +62,7 @@ function App() {
       // CREATE
       else {
         response = await fetch(
-          "${import.meta.env.VITE_API_URL}/products",
+          `${import.meta.env.VITE_API_URL}/products`,
           {
             method: "POST",
             headers: {
